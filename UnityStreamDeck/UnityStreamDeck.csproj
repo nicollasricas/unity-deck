@@ -1,6 +1,12 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <TargetFrameworks>netstandard2.0</TargetFrameworks>
+    <ApplicationIcon />
+    <Win32Resource />
+    <Authors>Nicollas R.</Authors>
+    <PackageLicenseFile>LICENSE</PackageLicenseFile>
+    <PackageProjectUrl>https://github.com/nicollasricas/unity-streamdeck</PackageProjectUrl>
+    <RepositoryUrl>https://github.com/nicollasricas/unity-streamdeck</RepositoryUrl>
   </PropertyGroup>
   <ItemGroup>
     <PackageReference Include="Fleck" Version="1.1.0" />
@@ -14,7 +20,13 @@
       <HintPath>..\..\..\..\..\..\..\Program Files\Unity\Hub\Editor\2019.3.0f6\Editor\Data\Managed\UnityEngine.dll</HintPath>
     </Reference>
   </ItemGroup>
+  <ItemGroup>
+    <None Include="..\LICENSE">
+      <Pack>True</Pack>
+      <PackagePath></PackagePath>
+    </None>
+  </ItemGroup>
   <Target Name="PostBuild" AfterTargets="PostBuildEvent">
-    <Exec Command="copy /Y &quot;$(TargetDir)$(ProjectName).dll&quot; &quot;E:\Unity3D\Projects\StreamDeck\Assets\Plugins\$(ProjectName).dll&quot;" />
+    <Exec Command="copy /Y &quot;$(TargetDir)$(ProjectName).dll&quot; &quot;E:\Unity3D\Projects\StreamDeck\Assets\Plugins\StreamDeck\$(ProjectName).dll&quot;" />
   </Target>
 </Project>

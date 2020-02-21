@@ -30,8 +30,6 @@ namespace UnityStreamDeck
             CreateConnection();
 
             ConnectToMessageServer();
-
-            Log("initialized");
         }
 
         private static void Log(string message)
@@ -56,15 +54,15 @@ namespace UnityStreamDeck
             connection.SetCookie(new Cookie("X-Unity-PID", System.Diagnostics.Process.GetCurrentProcess().Id.ToString()));
             connection.OnMessage += (sender, e) => QueueMessage(e);
             connection.OnClose += (s, e) => OnDisconnectedFromMessageServer(e.Code, e.Reason);
-            connection.OnError += (s, e) => LogError("disconnected, error: " + e.Message);
+            connection.OnError += (s, e) => LogError("error: " + e.Message);
             connection.OnOpen += (s, e) => OnConnectedToMessageServer();
         }
 
         private static void ConnectToMessageServer()
         {
-            Debug.Log("connecting");
+            Log("connecting...");
 
-            connection.Connect();
+            connection.ConnectAsync();
         }
 
         private static void OnConnectedToMessageServer()
@@ -76,7 +74,9 @@ namespace UnityStreamDeck
 
         private static void OnDisconnectedFromMessageServer(ushort code, string reason)
         {
-            Log($"disconnected ({code}/{reason})");
+            EditorApplication.update -= HandleMessages;
+
+            Log($"closed ({code}/{reason})");
 
             ConnectToMessageServer();
         }
@@ -237,16 +237,5 @@ namespace UnityStreamDeck
                 }
             }
         }
-
-        // smooth, low/terrain
-        //private static void SelectTerrainPaintLayer()
-        //{
-        //    //TerrainLayerInspector (Reflection Internal)
-        //}
-
-        //private static void SelectTerrainBrush()
-        //{
-        //    //TerrainLayerInspector (Reflection Internal)
-        //}
     }
 }
