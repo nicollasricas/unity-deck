@@ -1,0 +1,80 @@
+name: CI
+
+on:
+  push:
+    tags:
+      - v*
+
+jobs:
+  buildAndRelease:
+    runs-on: windows-latest
+    outputs:
+      changelog: "${{ steps.commitsChangeLog.outputs.changelog }}"
+    steps:
+      - uses: microsoft/setup-msbuild@v1
+
+      - uses: NuGet/setup-nuget@v1.0.5
+
+      - uses: actions/setup-dotnet@v1
+        with:
+          dotnet-version: 5.0.x
+
+      - uses: kuler90/setup-unity@v1
+        with:
+          unity-version: 2020.2.4f1
+
+      - uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
+
+      - run: nuget restore
+
+      - run: msbuild /p:Configuration=Release
+
+      - run: |
+          . tools/UnityPacker.exe mode pack folder "Unity/PackageProject/Assets/Plugins/StreamDeck" package UnityStreamDeck root "Assets/Plugins/StreamDeck" ignore "(\\.*|unitypackage|exe|cmd|pdb)$"
+
+      - uses: loopwerk/conventional-changelog-action@latest
+        id: commitsChangeLog
+        with:
+          token: "${{ secrets.GITHUB_TOKEN }}"
+          config_file: .github/workflows/tag-changelog-config.js
+
+      - uses: actions/create-release@latest
+        id: createRelease
+        env:
+          GITHUB_TOKEN: "${{ secrets.GITHUB_TOKEN }}"
+        with:
+          tag_name: "${{ github.ref }}"
+          release_name: "${{ github.ref }}"
+          body: |
+            ${{ steps.commitsChangeLog.outputs.changes }}
+          draft: false
+          prerelease: false
+
+      - uses: actions/upload-release-asset@latest
+        id: updateRelease
+        env:
+          GITHUB_TOKEN: "${{ secrets.GITHUB_TOKEN }}"
+        with:
+          upload_url: "${{ steps.createRelease.outputs.upload_url }}"
+          asset_path: UnityStreamDeck.unitypackage
+          asset_name: UnityStreamDeck.unitypackage
+          asset_content_type: application/zip
+  pullRequestChangelog:
+    runs-on: windows-latest
+    needs: buildAndRelease
+    steps:
+      - uses: actions/checkout@v2
+
+      - run: |
+          (Get-Content CHANGELOG.md) -replace "\[Unreleased\]", "$&`n`n${{ needs.buildAndRelease.outputs.changelog }}" | Set-Content CHANGELOG.md
+
+      - uses: peter-evans/create-pull-request@v3
+        with:
+          base: master
+          commit-message: Release ${{ github.ref }} CHANGELOG
+          title: Update CHANGELOG
+          branch: changelog
+          delete-branch: true
+          draft: false

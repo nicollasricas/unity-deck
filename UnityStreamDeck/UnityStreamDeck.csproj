@@ -7,18 +7,14 @@
     <PackageLicenseFile>LICENSE</PackageLicenseFile>
     <PackageProjectUrl>https://github.com/nicollasricas/unity-streamdeck</PackageProjectUrl>
     <RepositoryUrl>https://github.com/nicollasricas/unity-streamdeck</RepositoryUrl>
+    <Version>1.1.0</Version>
   </PropertyGroup>
   <ItemGroup>
-    <PackageReference Include="Fleck" Version="1.1.0" />
     <PackageReference Include="WebSocketSharp-netstandard" Version="1.0.1" />
   </ItemGroup>
   <ItemGroup>
-    <Reference Include="UnityEditor">
-      <HintPath>..\..\..\..\..\..\..\Program Files\Unity\Hub\Editor\2019.3.0f6\Editor\Data\Managed\UnityEditor.dll</HintPath>
-    </Reference>
-    <Reference Include="UnityEngine">
-      <HintPath>..\..\..\..\..\..\..\Program Files\Unity\Hub\Editor\2019.3.0f6\Editor\Data\Managed\UnityEngine.dll</HintPath>
-    </Reference>
+    <Reference Include="C:\Program Files\Unity\Hub\Editor\2020.2.4f1\Editor\Data\Managed\UnityEditor.dll" />
+    <Reference Include="C:\Program Files\Unity\Hub\Editor\2020.2.4f1\Editor\Data\Managed\UnityEngine.dll" />
   </ItemGroup>
   <ItemGroup>
     <None Include="..\LICENSE">
@@ -27,6 +23,9 @@
     </None>
   </ItemGroup>
   <Target Name="PostBuild" AfterTargets="PostBuildEvent">
-    <Exec Command="copy /Y &quot;$(TargetDir)$(ProjectName).dll&quot; &quot;E:\Unity3D\Projects\StreamDeck\Assets\Plugins\StreamDeck\$(ProjectName).dll&quot;" />
+    <Exec Command="copy /Y &quot;$(TargetDir)$(ProjectName).dll&quot; &quot;..\Unity\PackageProject\Assets\Plugins\StreamDeck\Editor\$(ProjectName).dll&quot;" />
+  </Target>
+  <Target Name="PostBuildDebug" AfterTargets="PostBuild" Condition="'$(Configuration)'=='DEBUG'">
+    <Exec Command="copy /Y &quot;$(TargetDir)$(ProjectName).pdb&quot; &quot;..\Unity\PackageProject\Assets\Plugins\StreamDeck\Editor\$(ProjectName).pdb&quot;" />
   </Target>
 </Project>
