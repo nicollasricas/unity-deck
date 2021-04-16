@@ -49,7 +49,7 @@ To execute a menu, you have to write the full path, spaces included. Submenus us
 
 - The default port is been used by another software
 
-  > You can change the port on the [Settings](#Settings) file, don't forget to change it on the [Stream Deck Plugin](https://github.com/nicollasricas/streamdeck-unity#settings).
+  > You can change the port on the [Settings](#Settings) menu, don't forget to change it on the [Stream Deck Plugin](https://github.com/nicollasricas/streamdeck-unity#settings).
 
 - Will this plugin be built into the compiled project??
 
