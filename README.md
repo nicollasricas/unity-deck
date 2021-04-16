@@ -6,15 +6,13 @@ Enables Stream Deck integration within Unity.
 
 ## Getting Started
 
-1. Download the _Unity_ plugin for Stream Deck on Stream Deck Store or [here](https://github.com/nicollasricas/streamdeck-unity/releases/latest).
+1. Download the plugin for Stream Deck on the Stream Deck Store or [here](https://github.com/nicollasricas/streamdeck-unity/releases/latest).
 
-2. Download the [Unity package](https://github.com/nicollasricas/unity-streamdeck/releases/latest) and [import](https://docs.unity3d.com/Manual/AssetPackages.html) in any Unity project you wish to use it.
+2. Download the unity package [here](https://github.com/nicollasricas/unity-streamdeck/releases/latest) and [import](https://docs.unity3d.com/Manual/AssetPackages.html) in any Unity project you wish to use it.
 
 If you have downloaded the plugin and imported the package into your project, you should see this message:
 
 ![Stream Deck Connected](https://user-images.githubusercontent.com/7860985/114270390-0f16ba00-99da-11eb-999b-fd90fb74cc95.png)
-
-**If for some reason the live link lost the connection it will automatically reconnect.**
 
 ## Features
 
@@ -47,11 +45,11 @@ To execute a menu, you have to write the full path, spaces included. Submenus us
 
 - The live link is not connecting
 
-  > Make sure you have installed the [stream deck plugin](https://github.com/nicollasricas/streamdeck-unity/releases/latest), imported the unity package into your project, the port you are using are available and the stream deck software is open. **If you have to change the port don't forget to change it on the [stream deck plugin](https://github.com/nicollasricas/streamdeck-unity)**.
+  > Make sure you have installed the [Stream Deck Plugin](https://github.com/nicollasricas/streamdeck-unity/releases/latest), imported the [Unity Package](https://github.com/nicollasricas/unity-streamdeck/releases/latest) into your project, the port you are using are available and the stream deck software is open. **If you have to change the port don't forget to change it on the [Unity Editor](https://github.com/nicollasricas/unity-streamdeck#settings)**.
 
 - The default port is been used by another software
 
-  > You can change the port on the [settings](#Settings) menu, don't forget to change it on the [stream deck plugin](https://github.com/nicollasricas/streamdeck-unity).
+  > You can change the port on the [Settings](#Settings) file, don't forget to change it on the [Stream Deck Plugin](https://github.com/nicollasricas/streamdeck-unity#settings).
 
 - Will this plugin be built into the compiled project??
 
