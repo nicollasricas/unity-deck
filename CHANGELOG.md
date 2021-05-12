@@ -2,6 +2,10 @@
 
 ## [Unreleased]
 
+## [v1.1.1] - 2021-05-12
+### Refactors
+- :loud_sound: Reduced log verbosity
+
 ## [v1.1.0] - 2021-04-10
 
 ### New Features
