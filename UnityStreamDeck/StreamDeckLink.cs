@@ -126,7 +126,7 @@ namespace UnityStreamDeck
 
         private void OnConnectedToMessageServer()
         {
-            Log("Connected", ignoreVerbose: true);
+            Log("Connected");
 
             disconnectedFromMessageServer = false;
         }
