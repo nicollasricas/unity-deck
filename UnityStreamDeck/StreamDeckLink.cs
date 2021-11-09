@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEditor;
 using UnityEditorInternal;
 using UnityEngine;
+using UnityEngine.XR;
 using WebSocketSharp;
 using WebSocketSharp.Net;
 
@@ -20,12 +21,14 @@ namespace UnityStreamDeck
         private readonly Dictionary<string, MessageHandler> messagesHandlers = new Dictionary<string, MessageHandler>();
         private readonly Queue<string> messages = new Queue<string>();
         private readonly Dictionary<string, Type> components = new Dictionary<string, Type>();
-        private readonly string sceneViewPath = "Window/Scene";
-        private readonly string gameViewPath = "Window/Game";
+        private string sceneViewPath = "Window/Scene";
+        private string gameViewPath = "Window/Game";
+
+        private readonly Dictionary<string, Delegate> editorFeaturesHandlers = new Dictionary<string, Delegate>();
 
         static StreamDeckLink()
         {
-            var liveLink = new StreamDeckLink(StreamDeckLinkConfiguration.Instance);
+            StreamDeckLink liveLink = new StreamDeckLink(StreamDeckLinkConfiguration.Instance);
             liveLink.Initialize();
         }
 
@@ -35,10 +38,13 @@ namespace UnityStreamDeck
         {
             configuration.ConfigurationChanged += Configuration_ConfigurationChanged;
 
-#if UNITY_2019_1_OR_NEWER
-            sceneViewPath = "Window/General/Scene";
-            gameViewPath = "Window/General/Game";
-#endif
+            var unityVersion = InternalEditorUtility.GetUnityVersion();
+
+            if (unityVersion.Major > 2019 || (unityVersion.Major == 2019 && unityVersion.Minor >= 1))
+            {
+                sceneViewPath = "Window/General/Scene";
+                gameViewPath = "Window/General/Game";
+            }
 
             if (configuration.Enabled)
             {
@@ -50,9 +56,13 @@ namespace UnityStreamDeck
 
         private void RegisterFeatureMessageHandler<T>(Action<T> handler) where T : Message
         {
-            var type = typeof(T);
+            Type type = typeof(T);
 
-            messagesHandlers.Add(type.Name, new MessageHandler(type, (message) => handler?.DynamicInvoke(message)));
+            messagesHandlers.Add(type.Name, new MessageHandler()
+            {
+                Type = type,
+                Handler = handler
+            });
         }
 
         private void RegisterFeaturesMessages()
@@ -181,18 +191,18 @@ namespace UnityStreamDeck
         {
             if (messages.Count > 0)
             {
-                var message = messages.Dequeue();
+                string message = messages.Dequeue();
 
-                var messageId = JsonUtility.FromJson<Message>(message).Id;
+                string messageId = JsonUtility.FromJson<Message>(message).Id;
 
                 if (configuration.Debug)
                 {
                     Log($"Message [{messageId}]: {message}", ignoreVerbose: true);
                 }
 
-                if (messagesHandlers.TryGetValue(messageId, out var messageHandler))
+                if (messagesHandlers.TryGetValue(messageId, out MessageHandler messageHandler))
                 {
-                    messageHandler.Handler?.DynamicInvoke(JsonUtility.FromJson(message, messageHandler.Type));
+                    messageHandler?.Handler.DynamicInvoke(JsonUtility.FromJson(message, messageHandler.Type));
                 }
             }
         }
@@ -201,7 +211,7 @@ namespace UnityStreamDeck
 
         private void ResetObject(ResetObjectMessage message)
         {
-            foreach (var gameObject in Selection.gameObjects)
+            foreach (GameObject gameObject in Selection.gameObjects)
             {
                 Undo.RecordObject(gameObject.transform, "Reset Object");
 
@@ -211,9 +221,9 @@ namespace UnityStreamDeck
 
         private void RotateObject(RotateObjectMessage message)
         {
-            var eulers = Vector3.zero;
+            Vector3 eulers = Vector3.zero;
 
-            var desiredAngle = message.Angle > 0 ? message.Angle : 90;
+            float desiredAngle = message.Angle > 0 ? message.Angle : 90;
 
             switch (message.Axis)
             {
@@ -228,7 +238,7 @@ namespace UnityStreamDeck
                     break;
             }
 
-            foreach (var gameObject in Selection.gameObjects)
+            foreach (GameObject gameObject in Selection.gameObjects)
             {
                 Undo.RecordObject(gameObject.transform, "Rotate Object");
 
@@ -238,7 +248,7 @@ namespace UnityStreamDeck
 
         private void PasteComponent(PasteComponentMessage message)
         {
-            foreach (var gameObject in Selection.gameObjects)
+            foreach (GameObject gameObject in Selection.gameObjects)
             {
                 Undo.RecordObject(gameObject, "Paste Component");
 
@@ -256,9 +266,9 @@ namespace UnityStreamDeck
 
         public void AddComponent(AddComponentMessage message)
         {
-            if (components.TryGetValue(message.Name.ToLower(), out var component))
+            if (components.TryGetValue(message.Name.ToLower(), out Type component))
             {
-                foreach (var gameObject in Selection.gameObjects)
+                foreach (GameObject gameObject in Selection.gameObjects)
                 {
                     Undo.RecordObject(gameObject, "Add Component");
 
@@ -290,9 +300,14 @@ namespace UnityStreamDeck
             }
         }
 
+        public void ToggleEditorSettings(string X, object value)
+        {
+            XRSettings.enabled = true;
+        }
+
         public void ToggleObjectState(ToggleObjectStateMessage message)
         {
-            foreach (var gameObject in Selection.gameObjects)
+            foreach (GameObject gameObject in Selection.gameObjects)
             {
                 Undo.RecordObject(gameObject, "Toggle Object State");
 
