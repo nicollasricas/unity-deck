@@ -2,6 +2,10 @@
 
 ## [Unreleased]
 
+## [v1.1.2] - 2021-11-09
+### Bugfixes
+- :bug: Fix toggle scene/game view action.
+
 ## [v1.1.1] - 2021-05-12
 ### Refactors
 - :loud_sound: Reduced log verbosity
