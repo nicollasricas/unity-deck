@@ -2,6 +2,10 @@
 
 ## [Unreleased]
 
+## [v1.1.3] - 2022-01-23
+### Bugfixes
+- :bug: Fixed component caching
+
 ## [v1.1.2] - 2021-11-09
 ### Bugfixes
 - :bug: Fix toggle scene/game view action.
