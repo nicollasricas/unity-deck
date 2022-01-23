@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using UnityEditor;
 using UnityEditorInternal;
 using UnityEngine;
-using UnityEngine.XR;
 using WebSocketSharp;
 using WebSocketSharp.Net;
 
@@ -38,9 +37,7 @@ namespace UnityStreamDeck
         {
             configuration.ConfigurationChanged += Configuration_ConfigurationChanged;
 
-            var unityVersion = InternalEditorUtility.GetUnityVersion();
-
-            if (unityVersion.Major > 2019 || (unityVersion.Major == 2019 && unityVersion.Minor >= 1))
+            if (InternalEditorUtility.GetUnityVersion().CompareTo(new Version(2019, 1)) >= 0)
             {
                 sceneViewPath = "Window/General/Scene";
                 gameViewPath = "Window/General/Game";
@@ -175,16 +172,22 @@ namespace UnityStreamDeck
 
         private void CacheComponents()
         {
-#if UNITY_2019_2_OR_NEWER
-            Log("Caching components...");
-
-            components.Clear();
-
-            foreach (var type in TypeCache.GetTypesDerivedFrom<Component>())
+            if (InternalEditorUtility.GetUnityVersion().CompareTo(new Version(2019, 2)) >= 0)
             {
-                components[type.Name.ToLower()] = type;
+                Log("Caching components...");
+
+                components.Clear();
+
+                foreach (Type type in TypeCache.GetTypesDerivedFrom<Component>())
+                {
+                    if (configuration.Debug)
+                    {
+                        Log($"Cached component {type.Name}", ignoreVerbose: true);
+                    }
+
+                    components[type.Name.ToLower()] = type;
+                }
             }
-#endif
         }
 
         private void HandleMessages()
@@ -298,11 +301,6 @@ namespace UnityStreamDeck
                     EditorApplication.ExecuteMenuItem(sceneViewPath);
                 }
             }
-        }
-
-        public void ToggleEditorSettings(string X, object value)
-        {
-            XRSettings.enabled = true;
         }
 
         public void ToggleObjectState(ToggleObjectStateMessage message)

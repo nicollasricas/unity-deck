@@ -39,7 +39,7 @@ namespace UnityStreamDeck
             ServerHost = EditorPrefs.GetString(GetPrefsFullName(nameof(ServerHost)), "127.0.0.1");
             ServerPort = EditorPrefs.GetInt(GetPrefsFullName(nameof(ServerPort)), 18084);
             Enabled = EditorPrefs.GetBool(GetPrefsFullName(nameof(Enabled)), true);
-            Verbose = EditorPrefs.GetBool(GetPrefsFullName(nameof(Verbose)), true);
+            Verbose = EditorPrefs.GetBool(GetPrefsFullName(nameof(Verbose)), false);
             Debug = EditorPrefs.GetBool(GetPrefsFullName(nameof(Debug)), false);
         }
 
