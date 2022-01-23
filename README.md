@@ -4,6 +4,10 @@ Enables Stream Deck integration within Unity.
 
 **It should work with any Unity version as long it targets .NET 4.0+.**
 
+![GitHub Workflow Status](https://img.shields.io/github/workflow/status/nicollasricas/unity-streamdeck/CI?style=for-the-badge)
+![GitHub release (latest by date)](https://img.shields.io/github/v/release/nicollasricas/unity-streamdeck?style=for-the-badge)
+[![GitHub license](https://img.shields.io/github/license/nicollasricas/unity-streamdeck?style=for-the-badge)](https://github.com/nicollasricas/unity-streamdeck/blob/master/LICENSE)
+
 ## Getting Started
 
 1. Download the plugin for Stream Deck on the Stream Deck Store or [here](https://github.com/nicollasricas/streamdeck-unity/releases/latest).
